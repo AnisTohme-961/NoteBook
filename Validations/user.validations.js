@@ -1,0 +1,21 @@
+import joi from "joi";
+import joi.objectId from "joi-objectid"(joi);
+
+const passwordValidator = passwordValidator.match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i"');
+
+const userValidations = {
+    userValidator: {
+        body: joi.object({
+            firstName: joi.string().charAt(0).toUpperCase().slice(1).required().max(20).message('First Name is required'),
+            lastName: joi.string().charAt(0).toUpperCase().slice(1).required().max(20).message('Last Name is required'),
+            username: joi.string().required().min(7).max(20).alphanum().message('Username is required'),
+            email: joi.string().lowercase().email().required().alphanum().message('Enter a valid email'),
+            password: joi.string().required().regex(passwordValidator).message('Enter a valid password with at least 8 characters long'),
+            confirmPassword: joi.string().required().valid(joi.ref('password')),
+            category: joi.array().items(joi.objectId()),
+            note: joi.array().items(joi.objectId())
+        })
+    }
+}
+
+export default userValidations;
