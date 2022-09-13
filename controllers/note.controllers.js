@@ -47,7 +47,6 @@ export const viewNotesRelatedToCategory = async (req, res, next) => {
             },
             $match: {
                 
-
             }
         }
     ])
