@@ -1,5 +1,5 @@
 import joi from "joi";
-import joi.objectId from "joi-objectid"(joi);
+// import joi.objectId from "joi-objectid"(joi);
 
 const categoryValidations = {
     categoryValidator: {

@@ -59,12 +59,10 @@ export const getNoteWithFirstTag = async (req, res, next) => {
             $group: {
                 _id : "$title",
                 tags: { $sum: 1 }
-        }, 
-        {
+            }, 
             $addFields: {
                 firstTag: { $first: "$tags" }
             }
-        }
       }
     ])
 
