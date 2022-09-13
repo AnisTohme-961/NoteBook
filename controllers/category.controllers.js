@@ -52,7 +52,7 @@ export const getCategoryById = async (req, res, next) => {
             {
                 $project: {
                     title: 1,
-                    _id: 0
+                    _id: 0 ,
                     writtenBy: {
                         $concat: [$firstName, " ", $lastName],
                         email: 1
