@@ -34,6 +34,7 @@ export const getCategoryById = async (req, res, next) => {
             message: "Category found successfully",
             category: category
         })*/
+        const categoryId = req.params.categoryId;
         const categoryAggregate = await Category.aggregate([
             { 
                 $match: { _id: mongoose.Types.ObjectId(categoryId) } 
@@ -52,15 +53,14 @@ export const getCategoryById = async (req, res, next) => {
             {
                 $project: {
                     title: 1,
-                    _id: 0 ,
+                    _id: 0,
                     writtenBy: {
-                        $concat: [$firstName, " ", $lastName],
-                        email: 1
+                        $concat: ["$user.firstName", " ", "$user.lastName"],
+                        email: "$user.email"
                     }
                 }
             }
         ])
-
         return categoryAggregate[0];
     }
     catch (error) {
@@ -76,7 +76,7 @@ export const createCategory = async (req, res, next) => {
         })
         await category.save();
         const user = await User.findById(req.user);
-        user.categoryId.push(category);
+        user.categories.push(category);
         await user.save();
         res.status(201).json({
             success: true,
