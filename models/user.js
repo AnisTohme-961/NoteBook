@@ -3,13 +3,13 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = mongoose.Schema({
     firstName: {
         type: String,
-        required: [true, 'First Name is required.']
+        default: null
     },
     lastName: {
         type: String, 
-        required: [true, 'Last Name is required.']
+        default: null
     },
-    userName: {
+    username: {
         type: String, 
         required: [true, 'Username is required.']
     },
