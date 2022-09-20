@@ -14,18 +14,19 @@ let transporter = nodemailer.createTransport({
 
 export const signUp = async (req, res, next) => {
 
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password,12);
 
     try {
     const user = new User({
+        username: username,
         email: email,
         password: hashedPassword,
     })
     const result = await user.save();
     res.status(201).json({
         message: 'Sign Up successful', 
-        id: result.id
+        data: result
     });
     const sentEmail = await transporter.sendMail({  
         to: email,
