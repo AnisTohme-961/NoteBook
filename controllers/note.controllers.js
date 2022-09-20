@@ -91,10 +91,11 @@ export const getNoteById = async (req, res, next) => {
 }
 
 export const viewNotesRelatedToCategory = async (req, res, next) => {
+    const { noteId } = req.params;
     const noteCategory = await Note.aggregate([
         {
             $match: {
-                _id: mongoose.Types.ObjectId(noteId)
+                categoryId: mongoose.Types.ObjectId(noteId)
             },
             $lookup: {
                 from: "categories",
