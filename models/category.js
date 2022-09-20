@@ -9,10 +9,6 @@ const categorySchema = mongoose.Schema({
     description: {
         type: String,
         required: true
-<<<<<<< HEAD
-=======
-        
->>>>>>> bc11d7d15879641e1e2c5755de53c1407cf8b789
     },
     writtenBy: {
         type: Schema.Types.ObjectId,
