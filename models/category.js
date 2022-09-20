@@ -6,6 +6,11 @@ const categorySchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    description: {
+        type: String,
+        required: true
+        
+    },
     writtenBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'    

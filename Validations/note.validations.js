@@ -1,18 +1,11 @@
-import joi from "joi";
+import Joi from "joi";
 import JoiObjectId from "joi-objectid";
-const myJoiObjectId = JoiObjectId(joi);
 
-const noteValidations = {
-    noteValidator: {
-        body: joi.object({
-           title: joi.string().required().min(7).alphanum(),
-           description: joi.string().required().min(25).alphanum(),
-           writtenBy: myJoiObjectId().required(),
-           status: joi.string().valid('completed','pending').default('pending'),
-           categoryId: myJoiObjectId().required(),
-           tags: joi.array().items(joi.string()).optional().default('null')
-        })
-    }
-}
+const myJoiObjectId = JoiObjectId(Joi);
+const noteSchema = Joi.object({
+    title: Joi.string().min(3).max(30).required(),
+    content: Joi.string().min(3).max(1000).required(),
+    writtenBy: myJoiObjectId().required(),
+});
 
-export default noteValidations;
+export default noteSchema;
