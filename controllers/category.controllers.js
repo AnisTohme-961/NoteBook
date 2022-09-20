@@ -53,7 +53,7 @@ export const getCategoryById = async (req, res, next) => {
             {
                 $project: {
                     title: 1,
-                    _id: 0,
+                    _id: 1,
                     writtenBy: {
                         $concat: ["$user.firstName", " ", "$user.lastName"],
                         email: "$user.email"
@@ -62,6 +62,12 @@ export const getCategoryById = async (req, res, next) => {
             }
         ])
         return categoryAggregate[0];
+
+        res.status(200).json({
+            success: true, 
+            message: "Category found successfully",
+            categoryAggregate: categoryAggregate[0]
+        })
     }
     catch (error) {
         next(error);
