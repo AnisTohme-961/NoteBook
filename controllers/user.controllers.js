@@ -40,7 +40,7 @@ export const getUserById = async (req, res, next) => {
     }
 }
 
-export const createUser = async (req, res, next) => {
+/*export const createUser = async (req, res, next) => {
     const { firstName, lastName, userName, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
     try {
@@ -61,7 +61,7 @@ export const createUser = async (req, res, next) => {
     catch (error) {
         next (error)
     }
-}
+}*/
 
 export const updateUser = async (req, res, next) => {
     const userId = req.params.id;
