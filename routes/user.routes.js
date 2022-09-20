@@ -1,7 +1,7 @@
 import express from 'express';
 import { verifyLogin } from '../Middleware/Verification.js';
 import { validate } from 'express-validation';
-import { createUser, deleteUser, getUserById, getUsers, updateUser } from '../controllers/user.controllers.js';
+import { deleteUser, getUserById, getUsers, updateUser } from '../controllers/user.controllers.js';
 import userValidations from '../Validations/user.validations.js';
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.get('/user/id', verifyLogin, getUserById);
 // @desc    Create user
 // @access  Public
 
-router.post('/user', verifyLogin, validate(userValidations.userValidator), createUser);
+//router.post('/user', verifyLogin, validate(userValidations.userValidator), createUser);
 
 // @route   PUT /user/:id
 // @desc    Update user
