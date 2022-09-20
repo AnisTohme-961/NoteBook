@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 
-app.use(authRoutes);
+app.use("/auth", authRoutes);
 app.use(userRoutes);
 app.use(noteRoutes);
 app.use(categoryRoutes);
