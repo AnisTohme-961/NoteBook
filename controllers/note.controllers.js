@@ -82,6 +82,7 @@ export const getNoteById = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Note found successfully", 
+            noteAggregate: noteAggregate[0]
         })
 
     }
