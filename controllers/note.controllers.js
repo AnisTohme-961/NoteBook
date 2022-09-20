@@ -22,7 +22,7 @@ export const getNotes = async (req, res, next) => {
 }
 
 export const getNoteById = async (req, res, next) => {
-    try {
+   /* try {
         const noteId = req.params.noteId;
         const note = await Note.findById(noteId);
         if (note.length <= 0) {
@@ -36,58 +36,133 @@ export const getNoteById = async (req, res, next) => {
     }
     catch (error) {
         next (error)
+    } */
+    try {
+        const noteId = req.params.noteId;
+        const noteAggregate = await Note.aggregate([
+            {
+                $match: { _id: mongoose.Types.ObjectId(noteId) }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'writtenBy',
+                    foreignField: '_id',
+                    as: 'user_info'
+                }
+            },
+            {
+                $unwind: { $writtenBy }
+            },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'title',
+                    foreignField: '_id',
+                    as: 'category_info'
+                }
+            },
+            {
+                $unwind: { $title }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    writtenBy: {
+                        $concat: ["$user_info.firstName", " ", "$user_info.lastName"],
+                        email: "$user_info.email"
+                    },
+                    category: "$category_info.title"
+                }
+            }
+        ])   
+        return noteAggregate[0];
+
+        res.status(200).json({
+            success: true,
+            message: "Note found successfully", 
+        })
+
     }
+    catch (error) {
+        next (error)
+    }   
 }
 
 export const viewNotesRelatedToCategory = async (req, res, next) => {
     const noteCategory = await Note.aggregate([
         {
-            $project: {
-                title: 1
-            },
             $match: {
-                
+                _id: mongoose.Types.ObjectId(noteId)
+            },
+            $lookup: {
+                from: "categories",
+                localField: "title",
+                foreignField: "_id",
+                as: "category"
+            },
+            $group: {
+                _id: "$title",
+                categoryTitle: "$category.title"
             }
         }
     ])
 }
 
-export const getNoteWithFirstTag = async (req, res, next) => {
-    const firstNoteTag = await Note.aggregate([
-        { 
-            $group: {
-                _id : "$title",
-                tags: { $sum: 1 }
-            }, 
-            $addFields: {
-                firstTag: { $first: "$tags" }
+export const getFirstAndLastTag = async (req, res, next) => {
+    try {
+        const firstAndLastTag = await Note.aggregate([
+            {
+                $project: {
+                    title: 1,
+                    _id: 0,
+                    first: { $arrayElemAt: ["$tags", 0] },
+                    last: { $arrayElemAt: ["$tags", -1] }
+                }
             }
-      }
-    ])
-
-    return firstNoteTag[0];
+        ])
+    }
+    catch (error) {
+        next (error)
+    }
 }
 
 export const getNoteWithTags = async (req, res, next) => {
-    const noteTags = await Note.aggregate([
-        {
-            $unwind: "$tags"
-        },
-        {
-            $group: {
-                _id: null,
-                tags: { $push: "$tags"}
+    try {
+        const noteTags = await Note.aggregate([
+            {
+                $unwind: "$tags"
+            },                                  
+            {
+                $group: {
+                    _id: "$title",
+                    tags: { $push: "$tags"}
+                }
             }
-        },
+        ])
+    }
+    catch (error) {
+        next (error)
+    }  
+}
+
+export const getTagSize = async (req, res, next) => {
+    const sizeTag = await Note.aggregate([
         {
             $project: {
-                title: true,
-                tags: true,
-                _id: false
+                title:1,
+                _id: 0,
+                numberofTags: { 
+                    $cond: { 
+                        if: { $isArray: "$tags" },
+                        then: { $size: "$tags" },
+                        else: "Not Applicable"    
+                    } 
+                }
             }
         }
     ])
-    return noteTags[0];
 }
 
 export const createNote = async (req, res, next) => {
@@ -101,7 +176,7 @@ export const createNote = async (req, res, next) => {
         })
         await note.save();
         const user = await User.findById(req.user);
-        user.noteId.push(note);
+        user.notes.push(note);
         await user.save();
         res.status(201).json({
             success: true,
