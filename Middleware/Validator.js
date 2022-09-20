@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import Validators from "../Validations/index.js";
+=======
+import Validators from "../Validations";
+>>>>>>> bc11d7d15879641e1e2c5755de53c1407cf8b789
 
 const Validator = (validator) => {
   return (req, res, next) => {
