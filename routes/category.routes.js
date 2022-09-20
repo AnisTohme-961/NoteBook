@@ -2,7 +2,7 @@ import express from 'express';
 import { verifyLogin } from "../Middleware/Verification.js";
 import { validate } from 'express-validation';
 import { createCategory, deleteCategory, getCategories, getCategoryById, updateCategory } from "../controllers/category.controllers.js";
-import categoryValidations from '../Validations/category.validations.js';
+import Validator from '../Middleware/Validator.js';
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get('/category/categoryId', verifyLogin, getCategoryById);
 // @desc    Create category
 // @access  Public
 
-router.post('/category', verifyLogin, validate(categoryValidations.categoryValidator), createCategory);
+router.post('/category', verifyLogin, Validator('category'), createCategory);
 
 // @route   PUT /category/:id
 // @desc    Update category
