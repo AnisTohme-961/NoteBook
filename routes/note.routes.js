@@ -2,7 +2,7 @@ import express from 'express';
 import { verifyLogin } from '../Middleware/Verification.js';
 import { validate } from 'express-validation';
 import { createNote, deleteNote, getNoteById, getNotes, updateNote } from '../controllers/note.controllers.js';
-import noteValidations from '../Validations/note.validations.js';
+import Validator from '../Middleware/Validator.js';
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get('/note/noteId', verifyLogin, getNoteById);
 // @desc    Create note
 // @access  Public
 
-router.post('/note', verifyLogin, validate(noteValidations.noteValidator), createNote);
+router.post('/note', verifyLogin, Validator('note'), createNote);
 
 // @route   PUT /note/:noteId
 // @desc    Update note
