@@ -1,9 +1,11 @@
 import User from '../models/user.js';
 import bcrypt from "bcrypt";
 import createError from '../util/Error.js';
+import mongoose from 'mongoose';
 
 export const getUsers = async (req, res, next) => {
     try {
+        
         const users = await User.find({});
         if (users.length <= 0) {
             return next(createError("Users not found.", 404))
