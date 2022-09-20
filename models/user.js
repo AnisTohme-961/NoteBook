@@ -22,11 +22,11 @@ const userSchema = mongoose.Schema({
         type: String, 
         required: [true, 'Password is required.']
     },
-    category: [{
+    categories: [{
         type: Schema.Types.ObjectId,
         ref: 'Category'
     }],
-    note: [{
+    notes: [{
         type: Schema.Types.ObjectId,
         ref: 'Note'
     }]
