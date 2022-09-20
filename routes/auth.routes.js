@@ -1,5 +1,7 @@
 import express from "express";
 import { login, signUp } from "../controllers/auth.js";
+import userValidations from '../Validations/user.validations.js';
+import { validate } from "express-validation";
 
 const router = express.Router();
 
@@ -7,7 +9,7 @@ const router = express.Router();
 // @desc    User sign up
 // @access  Private
 
-router.post('/signup', signUp);
+router.post('/signup', validate(userValidations.userValidator), signUp);
 
 // @route   POST /login
 // @desc    User login
