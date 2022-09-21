@@ -1,16 +1,17 @@
+import jwt from 'jsonwebtoken';
 import createError from "../util/Error.js";
 
 export const verifyLogin = async (req, res, next) => {
     let token = null;
     try {
-        console.log("headers: ", req.headers.authorization)
+        // console.log("headers: ", req.headers.authorization)
         const headers = req.headers.authorization;
         if (headers == undefined) {
             return next(createError("Token not found.", 401))
         }
         token = req.headers.authorization.split(" ")[1];
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded Token: ", decodedToken);
+        // console.log("Decoded Token: ", decodedToken);
 
         if (!decodedToken) {
             return next(createError("Token invalid", 401))
