@@ -14,13 +14,15 @@ let transporter = nodemailer.createTransport({
 
 export const signUp = async (req, res, next) => {
 
-    const { username, email, password } = req.body;
+    const { username, email, firstName, lastName, password } = req.body;
     const hashedPassword = await bcrypt.hash(password,12);
 
     try {
     const user = new User({
         username: username,
         email: email,
+        firstName: firstName,
+        lastName: lastName,
         password: hashedPassword,
     })
     const result = await user.save();
@@ -49,16 +51,17 @@ export const login = async (req, res, next) => {
     try {
     const user = await User.findOne({email: email}); 
     if (!user) {
-        return next(createError("Email not found", 404))
+        return next(createError("User not found", 404))
     }
     const isEqual = bcrypt.compareSync(password, user.password);
     if (!isEqual) {
-        return next(createError("The password does not match."), 401);
+        return next(createError("Invalid Password"), 401);
     }
 
     const { accessToken, refreshToken } = generateUserToken(user);
 
-    await User.findOneAndUpdate({id}, refreshToken);    // refresh token is added to the database
+    const { _id } = user;
+    await User.findOneAndUpdate({_id}, refreshToken);    // refresh token is added to the database
 
     const { token, ...userData } = user._doc;   // _doc removes refresh token from user data
 
@@ -66,7 +69,7 @@ export const login = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: `${user.firstName} ${user.lastName} logged in successfully.`,
+        message: `${user.username} logged in successfully.`,
         user: userData
     })
   }
