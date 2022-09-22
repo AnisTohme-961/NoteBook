@@ -1,19 +1,16 @@
-import User from '../models/user.js';
 import Category from '../models/category.js';
-import createError from '../util/Error.js';
+import User from '../models/user.js';
 import category from '../models/category.js';
+import createError from '../util/Error.js';
 import mongoose from 'mongoose';
 
 export const getCategories = async (req, res, next) => {
     try {
-        const categories = await Category.find({});
-        if (categories.length <= 0) {   
-            return next(createError("Categories not found.", 404))
-        }
+        const categories = await Category.find();
         res.status(200).json({
             success: true,
             message: "These are all the categories displayed.",
-            categories: categories,
+            data: categories,
             count: categories.length
         })
     }
@@ -46,27 +43,23 @@ export const getCategoryById = async (req, res, next) => {
                 foreignField: '_id',
                 as: 'user' 
                 } 
-            }, 
-            {
-                $unwind: {$writtenBy}
-            }, 
+            },
             {
                 $project: {
                     title: 1,
                     _id: 1,
                     writtenBy: {
-                        $concat: ["$user.firstName", " ", "$user.lastName"],
-                        email: "$user.email"
+                        $concat: ["user.firstName", " ", "user.lastName"],
+                        email: "user.email"
                     }
                 }
             }
         ])
-        return categoryAggregate[0];
-
+        // return categoryAggregate[0];
         res.status(200).json({
             success: true, 
             message: "Category found successfully",
-            categoryAggregate: categoryAggregate[0]
+            data: categoryAggregate[0]
         })
     }
     catch (error) {
@@ -75,20 +68,30 @@ export const getCategoryById = async (req, res, next) => {
 }
 
 export const createCategory = async (req, res, next) => {
-    const { title } = req.body;
+    const { title, description } = req.body;
+    const {id} = req.user;
     try {
+        // check if category already exists
+        const exist = await Category.findOne({ title });
+        if (exist) {
+            return next(createError("Category already exists.", 400));
+        }
         const category = new Category({
             title: title,
+            description: description,
+            writtenBy: id
         })
         await category.save();
-        const user = await User.findById(req.user);
-        user.categories.push(category);
+        
+        // update user with category
+        const user = await User.findById(id);
+        user.categories.push(category._id);
         await user.save();
         res.status(201).json({
             success: true,
             message: "Category created successfully",
-            category: category,
-            user: { _id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email }
+            data: category,
+            // user: user
         })
     }
     catch (error) {
@@ -98,15 +101,19 @@ export const createCategory = async (req, res, next) => {
 
 export const updateCategory = async (req, res, next) => {
     const categoryId = req.params.categoryId;
-    const title = req.body;
+    const {id} = req.user;
+    const { title, description } = req.body;
     try {
-        const category = await Category.findOneAndUpdate(categoryId, { title }, { new: true });
+        const category = await Category.findById(categoryId);
         if (!category) {
             return next(createError(`Category not found with id ${categoryId}`, 404));
         }
-        if (category.writtenBy.toString() !== req.user) {
+        if (category.writtenBy.toString() !== id) {
             return next(createError("User not authorized", 403))
         }
+        category.title = title;
+        category.description = description;
+        await category.save();
         res.status(200).json({
             success: true, 
             message: "Category updated successfully",

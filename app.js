@@ -1,11 +1,11 @@
-import express from "express";
-import dotenv from "dotenv";
-import databaseConnection from "./config/dbconnect.js";
 import ErrorHandler from "./Middleware/ErrorHandler.js";
 import authRoutes from "./routes/auth.routes.js";
-import userRoutes from "./routes/user.routes.js";
-import noteRoutes from "./routes/note.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
+import databaseConnection from "./config/dbconnect.js";
+import dotenv from "dotenv";
+import express from "express";
+import noteRoutes from "./routes/note.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use(noteRoutes);
-app.use(categoryRoutes);
+app.use("/categories",categoryRoutes);
 
 app.use(ErrorHandler);
 
