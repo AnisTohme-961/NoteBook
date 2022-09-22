@@ -199,29 +199,6 @@ export const updateNote = async (req, res, next) => {
     }
 }
 
-export const updateNotes = async (req, res, next) => {
-    const { notes } = req.body;
-    try {
-        const updatedNotes = await Note.updateMany({
-            _id: { $in: notes.map(note => note._id) }
-        }, {
-            $set: {
-                "title": { $arrayElemAt: [notes.map(note => note.title), 0] },
-                "description": { $arrayElemAt: [notes.map(note => note.description), 0] },
-                "status": { $arrayElemAt: [notes.map(note => note.status), 0] },
-                "tags": { $arrayElemAt: [notes.map(note => note.tags), 0] }
-            }
-        })
-        res.status(200).json({
-            success: true, 
-            message: "Notes updated successfully",
-            data: updateNotes
-        })
-    }
-    catch (error) {
-        next (error)
-    }
-}
 
 export const deleteNote = async (req, res, next) => {
     const noteId = req.params.noteId;
