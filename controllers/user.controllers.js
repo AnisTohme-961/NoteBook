@@ -40,36 +40,13 @@ export const getUserById = async (req, res, next) => {
     }
 }
 
-/*export const createUser = async (req, res, next) => {
-    const { firstName, lastName, userName, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 12);
-    try {
-        const user = new User({
-            firstName: firstName,
-            lastName: lastName,
-            userName: userName,
-            email: email,
-            password: hashedPassword
-        })
-        await user.save();
-        res.status(201).json({
-            success: true, 
-            message: "User created successfully.",
-            user: user
-        })
-    }
-    catch (error) {
-        next (error)
-    }
-}*/
-
 export const updateUser = async (req, res, next) => {
-    const userId = req.params.id;
-    const { firstName, lastName, userName, email } = req.body;
+    const {id} = req.user;
+    const {firstName, lastName} = req.body;
     try {
-        const user = await User.findOneAndUpdate({ userId }, { firstName, lastName, userName, email }, { new: true });
+        const user = await User.findOneAndUpdate({ _id: id }, { firstName, lastName }, { new: true });
         if (!user) {
-            return next(createError(`User not found with id ${userId}`, 404));
+            return next(createError(`User not found with id ${id}`, 404));
         }
         res.status(200).json({
             success: true,
@@ -83,11 +60,11 @@ export const updateUser = async (req, res, next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
-    const userId = req.params.id;
+    const {id} = req.user;
     try {
-        const user = await User.findOneAndDelete({userId});
+        const user = await User.findOneAndDelete({_id: id});
         if (!user) {
-            return next(createError(`User not found with id ${userId}`, 404))
+            return next(createError(`User not found with id ${id}`, 404))
         }
         res.status(200).json({
             success: true,
@@ -98,6 +75,30 @@ export const deleteUser = async (req, res, next) => {
     catch (error) {
         next (error)
     }
+}
+
+export const changePassword = async (req, res, next) => {
+    const { id } = req.user;
+    const { oldPassword, newPassword } = req.body;
+    try {
+        const user = await User.findOne({_id: id});
+        const isMatch = bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return next(createError('Old password is incorrect', 400))
+        }
+        const hashedPassword = await bcrypt.hash(newPassword,12);
+        user.password = hashedPassword;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            message: "Password changed successfully",
+            data: user.password
+        })
+    }
+    catch (error) {
+        next (error)
+    }
+    
 }
 
 

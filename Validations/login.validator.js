@@ -1,9 +1,9 @@
 import Joi from "joi";
 
-const passwordValidator = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/  // Password must have at least 1 number and 1 special character (6-16)
+const passwordValidator = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!#$@^%&? "])[a-zA-Z0-9!#$@^%&?]{8,20}$/ 
 
 const loginSchema = Joi.object({
-    email: Joi.string().email().required().alphanum(),
+    email: Joi.string().email().required(),
     password: Joi.string().required().pattern(passwordValidator)
 })
 

@@ -1,31 +1,38 @@
 import express from 'express';
 import { verifyLogin } from '../Middleware/Verification.js';
-import { deleteUser, getUserById, getUsers, updateUser } from '../controllers/user.controllers.js';
+import { changePassword, deleteUser, getUserById, getUsers, updateUser } from '../controllers/user.controllers.js';
+import Validator from "../Middleware/Validator.js"
 
 const router = express.Router();
 
-// @route   GET /users
+// @route   GET /users/
 // @desc    Get all users
-// @access  Public
+// @access  Private
 
-router.get('/users', verifyLogin, getUsers);
+router.get('/', verifyLogin, getUsers);
 
-// @route   GET /user/:id
+// @route   GET /user/id
 // @desc    Get user
-// @access  Public
+// @access  Private
 
-router.get('/user/id', verifyLogin, getUserById);
+router.get('/:id', verifyLogin, getUserById);
 
-// @route   PUT /user/:id
+// @route   PUT /
 // @desc    Update user
-// @access  Public
+// @access  Private
 
-router.put('/user/:id', verifyLogin, updateUser);
+router.put('/', verifyLogin, Validator('user'), updateUser);
 
-// @route   DELETE /user/:id
+// @route   DELETE /users/
 // @desc    Delete user
-// @access  Public
+// @access  Private
 
-router.delete('/user/:id', verifyLogin, deleteUser);
+router.delete('/', verifyLogin, deleteUser);
+
+// @route   PATCH /users/
+// @desc    Change password
+// @access  Private
+
+router.patch('/', verifyLogin, Validator('password'), changePassword);
 
 export default router;

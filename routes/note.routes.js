@@ -28,7 +28,7 @@ router.post('/note', verifyLogin, Validator('note'), createNote);
 // @desc    Update note
 // @access  Public
 
-router.put('/note/:noteId', verifyLogin, updateNote);
+router.put('/note/:noteId', verifyLogin, Validator('note'), updateNote);
 
 // @route   DELETE /note/:noteId
 // @desc    Delete note

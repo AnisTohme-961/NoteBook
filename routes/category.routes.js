@@ -28,7 +28,7 @@ router.post('/category', verifyLogin, Validator('category'), createCategory);
 // @desc    Update category
 // @access  Public
 
-router.put('/category/:categoryId', verifyLogin, updateCategory);
+router.put('/category/:categoryId', verifyLogin, Validator('category'), updateCategory);
 
 // @route   DELETE /category/:categoryId
 // @desc    Delete category

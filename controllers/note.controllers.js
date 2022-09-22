@@ -22,21 +22,7 @@ export const getNotes = async (req, res, next) => {
 }
 
 export const getNoteById = async (req, res, next) => {
-   /* try {
-        const noteId = req.params.noteId;
-        const note = await Note.findById(noteId);
-        if (note.length <= 0) {
-            return next(createError(`Note not found with id ${noteId}`, 404));
-        }
-        res.status(200).json({
-            success: true,
-            message: "Note fetched successfully",
-            note: note
-        })
-    }
-    catch (error) {
-        next (error)
-    } */
+    
     try {
         const noteId = req.params.noteId;
         const noteAggregate = await Note.aggregate([
@@ -206,6 +192,30 @@ export const updateNote = async (req, res, next) => {
             success: true,
             message: "Note updated successfully",
             note: note
+        })
+    }
+    catch (error) {
+        next (error)
+    }
+}
+
+export const updateNotes = async (req, res, next) => {
+    const { notes } = req.body;
+    try {
+        const updatedNotes = await Note.updateMany({
+            _id: { $in: notes.map(note => note._id) }
+        }, {
+            $set: {
+                "title": { $arrayElemAt: [notes.map(note => note.title), 0] },
+                "description": { $arrayElemAt: [notes.map(note => note.description), 0] },
+                "status": { $arrayElemAt: [notes.map(note => note.status), 0] },
+                "tags": { $arrayElemAt: [notes.map(note => note.tags), 0] }
+            }
+        })
+        res.status(200).json({
+            success: true, 
+            message: "Notes updated successfully",
+            data: updateNotes
         })
     }
     catch (error) {
