@@ -69,7 +69,7 @@ export const deleteUser = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "User deleted successfully",
-            user: user
+            data: user
         })
     }
     catch (error) {
@@ -97,8 +97,7 @@ export const changePassword = async (req, res, next) => {
     }
     catch (error) {
         next (error)
-    }
-    
+    }   
 }
 
 

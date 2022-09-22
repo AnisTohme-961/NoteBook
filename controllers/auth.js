@@ -14,13 +14,15 @@ let transporter = nodemailer.createTransport({
 
 export const signUp = async (req, res, next) => {
 
-    const { username, email, password } = req.body;
+    const { username, email, firstName, lastName, password } = req.body;
     const hashedPassword = await bcrypt.hash(password,12);
 
     try {
     const user = new User({
         username: username,
         email: email,
+        firstName: firstName,
+        lastName: lastName,
         password: hashedPassword,
     })
     const result = await user.save();
@@ -59,7 +61,7 @@ export const login = async (req, res, next) => {
     const { accessToken, refreshToken } = generateUserToken(user);
 
     const { _id } = user;
-
+    
     await User.findOneAndUpdate({_id}, refreshToken);    // refresh token is added to the database
 
     const { token, ...userData } = user._doc;   // _doc removes refresh token from user data
