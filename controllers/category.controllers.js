@@ -1,7 +1,7 @@
-import User from '../models/user.js';
 import Category from '../models/category.js';
-import createError from '../util/Error.js';
+import User from '../models/user.js';
 import category from '../models/category.js';
+import createError from '../util/Error.js';
 import mongoose from 'mongoose';
 
 export const getCategories = async (req, res, next) => {
@@ -10,7 +10,7 @@ export const getCategories = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "These are all the categories displayed.",
-            categories: categories,
+            data: categories,
             count: categories.length
         })
     }

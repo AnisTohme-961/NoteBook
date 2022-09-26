@@ -1,7 +1,6 @@
 import User from '../models/user.js';
 import bcrypt from "bcrypt";
 import createError from '../util/Error.js';
-import mongoose from 'mongoose';
 
 export const getUsers = async (req, res, next) => {
     try {
@@ -89,7 +88,11 @@ export const changePassword = async (req, res, next) => {
         if (!isMatch) {
             return next(createError('Old password is incorrect', 400))
         }
-        const hashedPassword = await bcrypt.hash(newPassword,12);
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return next(createError("Old password is incorrect.", 400));
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
         user.password = hashedPassword;
         await user.save();
         res.status(200).json({
