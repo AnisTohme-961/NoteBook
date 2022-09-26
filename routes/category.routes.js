@@ -1,6 +1,5 @@
 import express from 'express';
 import { verifyLogin } from "../Middleware/Verification.js";
-import { validate } from 'express-validation';
 import { createCategory, deleteCategory, getCategories, getCategoryById, updateCategory } from "../controllers/category.controllers.js";
 import Validator from '../Middleware/Validator.js';
 
@@ -8,32 +7,32 @@ const router = express.Router();
 
 // @route   GET /categories
 // @desc    Get all categories
-// @access  Public
+// @access  Private
 
-router.get('/categories', verifyLogin, getCategories);
+router.get('/', verifyLogin, getCategories);
 
-// @route   GET /category/categoryId
+// @route   GET /categories/:categoryId
 // @desc    Get category
-// @access  Public
+// @access  Private
 
-router.get('/category/categoryId', verifyLogin, getCategoryById);
+router.get('/:categoryId', verifyLogin, getCategoryById);
 
-// @route   POST /category
+// @route   POST /categories/
 // @desc    Create category
-// @access  Public
+// @access  Private
 
-router.post('/category', verifyLogin, Validator('category'), createCategory);
+router.post('/', verifyLogin, Validator('category'), createCategory);
 
-// @route   PUT /category/:id
+// @route   PUT /categories/:categoryid
 // @desc    Update category
-// @access  Public
+// @access  Private
 
-router.put('/category/:categoryId', verifyLogin, Validator('category'), updateCategory);
+router.put('/:categoryId', verifyLogin, Validator('category'), updateCategory);
 
 // @route   DELETE /category/:categoryId
 // @desc    Delete category
-// @access  Public
+// @access  Private
 
-router.delete('/category/:categoryId', verifyLogin, deleteCategory);
+router.delete('/:categoryId', verifyLogin, deleteCategory);
 
 export default router;

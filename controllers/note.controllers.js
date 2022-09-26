@@ -2,10 +2,11 @@ import Note from "../models/note.js";
 import User from "../models/user.js";
 import createError from "../util/Error.js";
 import mongoose from "mongoose";
+import category from "../models/category.js";
 
 export const getNotes = async (req, res, next) => {
     try {
-        const notes = await Note.find({});
+        const notes = await Note.find({}).sort({ createdAt: -1 });
         if (!notes) {
             return next(createError("Notes not found", 404))
         }
@@ -21,10 +22,13 @@ export const getNotes = async (req, res, next) => {
     }
 }
 
-export const getNoteById = async (req, res, next) => {
-    
+export const getNoteById = async (req, res, next) => { 
     try {
         const noteId = req.params.noteId;
+        const note = await Note.findById(noteId);
+        if (!note) {
+            return next(createError(`Note not found with id ${noteId}`))
+        }
         const noteAggregate = await Note.aggregate([
             {
                 $match: { _id: mongoose.Types.ObjectId(noteId) }
@@ -34,37 +38,37 @@ export const getNoteById = async (req, res, next) => {
                     from: 'users',
                     localField: 'writtenBy',
                     foreignField: '_id',
-                    as: 'user_info'
+                    as: 'user'
                 }
             },
             {
-                $unwind: { $writtenBy }
+                $unwind: "$user"
             },
             {
                 $lookup: {
                     from: 'categories',
                     localField: 'title',
                     foreignField: '_id',
-                    as: 'category_info'
+                    as: 'category'
                 }
             },
             {
-                $unwind: { $title }
+                $unwind: "$category"
             },
             {
                 $project: {
                     _id: 1,
                     title: 1,
-                    writtenBy: {
-                        $concat: ["$user_info.firstName", " ", "$user_info.lastName"],
-                        email: "$user_info.email"
+                    content: 1,
+                    createdBy: "$user._id",
+                    fullname: {
+                        $concat: ["$user.firstName", " ", "$user.lastName"]   
                     },
-                    category: "$category_info.title"
+                    email: "$user.email",
+                    category: "$category.title"
                 }
             }
-        ])   
-        return noteAggregate[0];
-
+        ])  
         res.status(200).json({
             success: true,
             message: "Note found successfully", 
@@ -92,7 +96,7 @@ export const viewNotesRelatedToCategory = async (req, res, next) => {
             },
             $group: {
                 _id: "$title",
-                categoryTitle: "$category.title"
+                category: "$category.title"
             }
         }
     ])
@@ -155,16 +159,24 @@ export const getTagSize = async (req, res, next) => {
 
 export const createNote = async (req, res, next) => {
     const { title, description, status, tags } = req.body;
+    const { id } = req.user;
+    const { categoryId } = req.params.categoryId;
     try {
+        const existingNote = await Note.findOne({ title })
+        if (existingNote) {
+            return next(createError("Note already exists", 400))
+        }
         const note = new Note({
             title: title, 
             description: description,
             status: status,
-            tags: tags
+            tags: tags,
+            writtenBy: id,
+            category: categoryId
         })
         await note.save();
-        const user = await User.findById(req.user);
-        user.notes.push(note);
+        const user = await User.findById(id);
+        user.notes.push(note._id);
         await user.save();
         res.status(201).json({
             success: true,
@@ -179,15 +191,20 @@ export const createNote = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
     const noteId = req.params.noteId;
+    const { id } = req.user;
     const { title, description, status, tags } = req.body;
     try {
-        const note = await Note.findOneAndUpdate({noteId}, { title, description, status, tags }, { new: true });
+        const note = await Note.findById(noteId);
         if (!note) {
-            return next(createError("Note not found", 404))
+            return next(createError(`Note not found with id ${noteId}`, 404))
         }
-        if (note.writtenBy.toString() !== req.user){
+        if (note.writtenBy.toString() !== id){
             return next(createError("User not authorized", 403))
         }
+        note.title = title;
+        note.description = description;
+        note.status = status;
+        note.tags = tags;
         res.status(200).json({
             success: true,
             message: "Note updated successfully",
@@ -225,17 +242,18 @@ export const updateNotes = async (req, res, next) => {
 
 export const deleteNote = async (req, res, next) => {
     const noteId = req.params.noteId;
+    const { id } = req.user;
     try {
         const note = await Note.findById(noteId);
         if (!note) {
-            return next(createError("Note not found", 404));
+            return next(createError(`Note not found with id ${noteId}`, 404));
         }
-        if (note.writtenBy.toString() !== req.user) {
+        if (note.writtenBy.toString() !== id) {
             return next(createError("User not authorized", 403))
         }
         const deletedNote = await Note.findByIdAndDelete(noteId);
-        const user = await User.findOne(req.user);
-        user.noteId.pull(note);
+        const user = await User.findById(id);
+        user.noteId.pull(note._id);
         await user.save();
         res.status(200).json({
             success: true,
@@ -248,28 +266,3 @@ export const deleteNote = async (req, res, next) => {
     }
 }
 
-// update array of notes
-export const updateNotes = async (req, res, next) => {
-    const { notes } = req.body;
-
-    try {
-        const updatedNotes = await Note.updateMany({
-            _id: { $in: notes.map(note => note._id) }
-        }, {
-            $set: {
-                "title": { $arrayElemAt: [notes.map(note => note.title), 0] },
-                "description": { $arrayElemAt: [notes.map(note => note.description), 0] },
-                "status": { $arrayElemAt: [notes.map(note => note.status), 0] },
-                "tags": { $arrayElemAt: [notes.map(note => note.tags), 0] }
-            }
-        })
-        res.status(200).json({
-            success: true,
-            message: "Notes updated successfully",
-            data: updatedNotes
-        })
-    }
-    catch (error) {
-        next (error)
-    }
-}

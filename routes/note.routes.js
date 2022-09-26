@@ -1,39 +1,38 @@
 import express from 'express';
 import { verifyLogin } from '../Middleware/Verification.js';
-import { validate } from 'express-validation';
 import { createNote, deleteNote, getNoteById, getNotes, updateNote } from '../controllers/note.controllers.js';
 import Validator from '../Middleware/Validator.js';
 
 const router = express.Router();
 
-// @route   GET /notes
+// @route   GET /notes/
 // @desc    Get all notes
-// @access  Public
+// @access  Private
 
-router.get('/notes', verifyLogin, getNotes);
+router.get('/', verifyLogin, getNotes);
 
 // @route   GET /note/noteId
 // @desc    Get note
-// @access  Public
+// @access  Private
 
-router.get('/note/noteId', verifyLogin, getNoteById);
+router.get('/:noteId', verifyLogin, getNoteById);
 
 // @route   POST /note
 // @desc    Create note
-// @access  Public
+// @access  Private
 
-router.post('/note', verifyLogin, Validator('note'), createNote);
+router.post('/', verifyLogin, Validator('note'), createNote);
 
 // @route   PUT /note/:noteId
 // @desc    Update note
-// @access  Public
+// @access  Private
 
-router.put('/note/:noteId', verifyLogin, Validator('note'), updateNote);
+router.put('/:noteId', verifyLogin, Validator('note'), updateNote);
 
 // @route   DELETE /note/:noteId
 // @desc    Delete note
-// @access  Public
+// @access  Private
 
-router.delete('/note/:noteId', verifyLogin, deleteNote);
+router.delete('/:noteId', verifyLogin, deleteNote);
 
 export default router;

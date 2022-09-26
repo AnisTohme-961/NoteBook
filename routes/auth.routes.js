@@ -2,7 +2,6 @@ import express from "express";
 import { login, signUp } from "../controllers/auth.js";
 import Validator from "../Middleware/Validator.js";
 
-
 const router = express.Router();
 
 // @route   POST /signup
