@@ -7,7 +7,8 @@ const noteSchema = Joi.object({
     title: Joi.string().min(3).max(30).required(),
     content: Joi.string().min(3).max(1000).required(),
     status: Joi.string().valid('pending', 'complete'),
-    tags: Joi.array().items(Joi.string())
+    tags: Joi.array().items(Joi.string()),
+    categoryId: myJoiObjectId('Category')
 });
 
 export default noteSchema;
