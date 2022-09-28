@@ -12,7 +12,8 @@ const noteSchema = mongoose.Schema({
     },
     writtenBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     status: {
         type: String, 
@@ -30,7 +31,7 @@ const noteSchema = mongoose.Schema({
         default: null,
         lowercase: true
     }
-
+    
 }, { timestamps: true })
 
 export default mongoose.model('Note', noteSchema);
