@@ -29,7 +29,11 @@ const userSchema = mongoose.Schema({
     notes: [{
         type: Schema.Types.ObjectId,
         ref: 'Note'
-    }]
+    }],
+    token: {
+        type: String,
+        default: null
+    }
 }, { timestamps: true })
 
 export default mongoose.model('User', userSchema);
