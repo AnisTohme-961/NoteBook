@@ -62,7 +62,7 @@ export const login = async (req, res, next) => {
 
     const { _id } = user;
     
-    await User.findOneAndUpdate({_id}, refreshToken);    // refresh token is added to the database
+    await User.findOneAndUpdate({_id}, {token: refreshToken});    // refresh token is added to the database
 
     const { token, ...userData } = user._doc;   // _doc removes refresh token from user data
 
