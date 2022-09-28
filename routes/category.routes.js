@@ -1,11 +1,7 @@
 import express from 'express';
 import { verifyLogin } from "../Middleware/Verification.js";
 import { createCategory, deleteCategory, getCategories, getCategoryById, updateCategory } from "../controllers/category.controllers.js";
-
 import Validator from '../Middleware/Validator.js';
-import express from 'express';
-import { validate } from 'express-validation';
-import { verifyLogin } from "../Middleware/Verification.js";
 
 const router = express.Router();
 
