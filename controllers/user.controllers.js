@@ -82,11 +82,7 @@ export const changePassword = async (req, res, next) => {
     try {
         const user = await User.findById(id);
         if (!user) {
-            return next(createError(`User not found with id ${id}`, 404))
-        }
-        const isMatch = bcrypt.compare(oldPassword, user.password);
-        if (!isMatch) {
-            return next(createError('Old password is incorrect', 400))
+            return next(createError(`User not found with id ${id}`, 404)) 
         }
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) {
