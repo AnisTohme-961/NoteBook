@@ -132,7 +132,7 @@ export const deleteCategory = async (req, res, next) => {
         }
         const deletedCategory = await Category.findByIdAndDelete(categoryId);
         const user = await User.findById(id);
-        user.categoryId.pull(category._id);
+        user.categories.pull(category._id);
         await user.save();
 
         res.status(200).json({
