@@ -26,7 +26,8 @@ Describe your project
 - [x] The API sends a welcome message to users after registation.
 - [x] Users can Create / Read / Update and delete Categories
 - [x] Users can Create / Read / Update and delete Notes
-This App uses JWT to secure authentication, and JOI for validations. I made use of Mongoose Aggregations to fetch records from multiple collections.
+This App uses JWT to secure authentication, and JOI for validations. 
+I made use of Mongoose Aggregations to fetch records from multiple collections.
 
 ## :sparkles: Features ##
 
