@@ -3,7 +3,6 @@
 
 <h1 align="center">NoteBook App API</h1>
 
-Status
 
 <h4 align="center"> 
 	🚧  NoteBook App API 🚀 Under construction...  🚧
