@@ -17,7 +17,7 @@ const noteSchema = mongoose.Schema({
     },
     status: {
         type: String, 
-        enum: ["completed", "pending"],
+        enum: ["complete", "pending"],
         default: "pending"
     },
     categoryId: {
