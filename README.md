@@ -24,9 +24,9 @@ Describe your project
 
 - [x] This Project API is for multi-user category based Note. It allows users to signup and create their own categorized notes.
 - [x] The API sends a welcome message to users after registation.
-- [x] Users can Create / read / update new Categories
-- [x] Users can create / read / update and delete notes
-This App uses JWT to secure authentication. I made use of Mogoose Aggrations to fetch records from multiple collections.
+- [x] Users can Create / Read / Update and delete Categories
+- [x] Users can Create / Read / Update and delete Notes
+This App uses JWT to secure authentication, and JOI for validations. I made use of Mongoose Aggregations to fetch records from multiple collections.
 
 ## :sparkles: Features ##
 
