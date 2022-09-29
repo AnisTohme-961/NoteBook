@@ -186,7 +186,7 @@ export const createNote = async (req, res, next) => {
 export const updateNote = async (req, res, next) => {
   const noteId = req.params.noteId
   const { id } = req.user
-  const { title, description, status, tags } = req.body
+  const { title, content, status, tags } = req.body
   try {
     const note = await Note.findById(noteId)
     if (!note) {
@@ -196,9 +196,10 @@ export const updateNote = async (req, res, next) => {
       return next(createError("User not authorized", 403))
     }
     note.title = title
-    note.description = description
+    note.content = content
     note.status = status
     note.tags = tags
+    await note.save();
     res.status(200).json({
       success: true,
       message: "Note updated successfully",
