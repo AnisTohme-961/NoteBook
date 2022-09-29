@@ -28,7 +28,7 @@ Describe your project
 - [x] Users can Create / Read / Update and delete Notes
 
 This App uses JWT to secure authentication, and JOI for validations. 
-I made use of Mongoose Aggregations to fetch records from multiple collections.
+The operation of Mongoose Aggregations is required to fetch records from multiple collections.
 
 ## :sparkles: Features ##
 
