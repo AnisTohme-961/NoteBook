@@ -15,6 +15,13 @@ const app = express();
 
 app.use(express.json());
 
+app.get('/', (req, res, next) => {
+    res.status(200).json({
+        message: "Welcome To The NoteBook API",
+        author: "Anis Tohme",
+        repository: "https://github.com/AnisTohme-961/NoteBook"
+    })
+})
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
