@@ -31,7 +31,7 @@ export const getNoteById = async (req, res, next) => {
     }
     const noteAggregate = await Note.aggregate([
       {
-        $match: { _id: mongoose.Types.ObjectId(noteId) }
+        $match: { _id: mongoose.Types.ObjectId(noteId) },
       },
       {
         $group: {
@@ -41,45 +41,34 @@ export const getNoteById = async (req, res, next) => {
             content: "$content",
             status: "$status",
             tags: "$tags",
-            writtenBy: "$writtenBy"
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "writtenBy",
-          foreignField: "id",
-          as: "user",
-        }
-      },
-      {
-        $unwind: "$user"
+            writtenBy: "$writtenBy",
+          },
+        },
       },
       {
         $lookup: {
           from: "categories",
           localField: "categoryId",
           foreignField: "id",
-          as: "category"
+          as: "category",
         },
       },
       {
-        $unwind: "$category"
+        $unwind: "$category",
       },
       {
         $project: {
           category: {
             id: "$category._id",
-            title: "$category.title" 
-          }
-        }
-      }
+            title: "$category.title",
+          },
+        },
+      },
     ])
     res.status(200).json({
       success: true,
       message: "Note found successfully",
-      note: noteAggregate[0]
+      note: noteAggregate[0],
     })
   } catch (error) {
     next(error)
@@ -199,7 +188,7 @@ export const updateNote = async (req, res, next) => {
     note.content = content
     note.status = status
     note.tags = tags
-    await note.save();
+    await note.save()
     res.status(200).json({
       success: true,
       message: "Note updated successfully",
