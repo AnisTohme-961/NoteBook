@@ -13,7 +13,7 @@
   <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
   <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
   <a href="#memo-license">License</a> &#xa0; | &#xa0;
-  <a href="https://github.com/Pukka-Technologies" target="_blank">Author</a>
+  <a href="https://github.com/AnisTohme-961" target="_blank">Author</a>
 </p>
 
 <br>
@@ -26,7 +26,7 @@ Describe your project
 - [x] The API sends a welcome message to users after registation.
 - [x] Users can Create / read / update new Categories
 - [x] Users can create / read / update and delete notes
-This App uses JWT to secure authentication. I made use of Mogoose Aggrations to fetch records from multiple collections.
+This App uses JWT to secure authentication. The operation of Mongoose Aggregations is required to fetch records from multiple collections.
 
 ## :sparkles: Features ##
 
